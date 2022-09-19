@@ -1,5 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -9,22 +7,42 @@ import java.util.Scanner;
     public class PartnerQuiz {
         static Db dataBase = new Db();
         static int[] randomNumbers2 = new int[5];
-        private static ArrayList<String> questions1 = new ArrayList<String>(5);
-        private static ArrayList<String> questions2 = new ArrayList<String>(5);
         static Scanner scanner = new Scanner(System.in);
         public static void main(String[] args) {
-            //loadQuestions();
             generateRandomNumbers();
             System.out.print("Player 1 enter your name -> ");
             String player1name = scanner.next();
             System.out.println("Hello " + player1name + ", welcome to the Partners Quiz! Please answer the questions provided and make sure your partner doesn’t see your answers");
-            //ArrayList<String> answers1 = askQustions(questions1,scanner);
             ArrayList<String> answers1 = askQustions(dataBase.readData(1,randomNumbers2));
             System.out.println("Thank you! Pass the test to the Partner and wait for the results! Do not advise!");
+            int size = 3;
+            for (int m = 0; m < size; m++) {
+                for (int n = 0; n <= 4 * size; n++) {
+                    double pos1 = Math.sqrt(Math.pow(m - size, 2) + Math.pow(n - size, 2));
+                    double pos2 = Math.sqrt(Math.pow(m - size, 2) + Math.pow(n - 3 * size, 2));
+
+                    if (pos1 < size + 0.5 || pos2 < size + 0.5) {
+                        System.out.print('*');
+                    } else {
+                        System.out.print(' ');
+                    }
+                }
+                System.out.print(System.lineSeparator());
+            }
+
+            for (int m = 1; m <= 2 * size; m++)
+            {
+                for (int n = 0; n < m; n++) {
+                    System.out.print(' ');
+                }
+                for (int n = 0; n < 4 * size + 1 - 2 * m; n++) {
+                    System.out.print("*");
+                }
+                System.out.print(System.lineSeparator());
+            }
             System.out.print("Player 2 enter your name -> ");
             String player2name = scanner.next();
             System.out.println("Hey " + player2name + ", let’s see how well do you know " + player1name + ". Answer the questions and find out!");
-            //ArrayList<String> answers2 = askQustions(questions2,scanner);
             ArrayList<String> answers2 = askQustions(dataBase.readData(2,randomNumbers2));
             scanner.close();
             System.out.println("Let’s see the result!");
@@ -32,7 +50,7 @@ import java.util.Scanner;
             System.out.println("Points: " + score + "/5");
             switch (score) {
                 case 0:
-                    System.out.println("Very, very bad");
+                    System.out.println("Very, very bad, just go and talk with your partner");
                     break;
                 case 1:
                     System.out.println("Do you even speak with your partner?");
@@ -49,31 +67,6 @@ import java.util.Scanner;
                 case 5:
                     System.out.println("Oh, love birds!");
                     break;
-            }
-        }
-        private static void loadQuestions() {
-            Random rand = new Random();
-            HashSet<Byte> nonrecurringindexes = new HashSet<Byte>(5);
-            while(nonrecurringindexes.size()!=5) {
-                nonrecurringindexes.add((byte)rand.nextInt(19));
-            }
-            try {
-                Scanner scanner = new Scanner(new File("/Users/karina/IdeaProjects/FinalProjectPartnersQuiz/src/questions"));
-                byte linenumber = 0;
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    if(line.contains(":")) {
-                        if(nonrecurringindexes.contains(linenumber)) {
-                            String[] linea = line.split(":", 2);
-                            questions1.add(linea[0]);
-                            questions2.add(linea[1]);
-                        }
-                        ++linenumber;
-                    }
-                }
-                scanner.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
         }
         private static ArrayList<String> askQustions(ArrayList<String> questions) {
@@ -113,7 +106,6 @@ import java.util.Scanner;
         private static void generateRandomNumbers(){
             Random rand = new Random();
             HashSet <Integer> randomNumbers = new HashSet<>();
-            //int[] randomNumbers2 = new int[5];
             randomNumbers.add(rand.nextInt(19)+1);
             while(randomNumbers.size() < 5){
                 randomNumbers.add(rand.nextInt(19)+1);
@@ -121,7 +113,6 @@ import java.util.Scanner;
             int j =0;
             for (int i: randomNumbers){
                 randomNumbers2[j++] = i;
-                //System.out.println(i);
             }
         }
     }
